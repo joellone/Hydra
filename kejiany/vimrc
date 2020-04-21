@@ -1,0 +1,35 @@
+"set color scheme
+color desert
+"set line number
+set nu
+"set tab
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set cindent
+set expandtab
+set ruler
+
+syntax enable
+syntax on
+set autoindent
+
+"set font
+set guifont=Cascadia\ Mono\ 11
+
+"set taglist
+""set tags=tags
+""let Tlist_Show_One_File=1
+""let Tlist_Exit_OnlyWindow=1
+""let Tlist_Process_File_Always=1
+""let Tlist_Auto_Open=1
+
+"set omnicppcomplete
+set nocp
+
+let g:Tlist_Ctags_Cmd='/usr/bin/ctags'
+
+filetype on
+
+highlight Pmenu    guibg=darkgrey  guifg=black
+highlight PmenuSel guibg=lightgrey guifg=black

@@ -1,0 +1,5 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =3
+let g:netrw_dirhist_1='/home/kejiany/00_work/00_verify/01_falcon_repo/06_S4X400H'
+let g:netrw_dirhist_2='/home/kejiany/00_work/00_verify/01_falcon_repo/06_S4X400H/testbench_systemv'
+let g:netrw_dirhist_3='/home/kejiany/00_work/00_verify/01_falcon_repo/06_S4X400H/testbench_systemv/scripts'
