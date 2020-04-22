@@ -1,0 +1,9 @@
+$FALCON_ROOT/rtl/fifo/async_cell_fifo_core.v
+$FALCON_ROOT/rtl/fifo/async_cell_fifo_top.v
+$FALCON_ROOT/rtl/fifo/async_fifo_core.v
+$FALCON_ROOT/rtl/fifo/async_fifo_top.v
+$FALCON_ROOT/rtl/fifo/counter_async_with_gray.v
+$FALCON_ROOT/rtl/fifo/sync_cell_fifo_core.v
+$FALCON_ROOT/rtl/fifo/sync_cell_fifo_top.v
+$FALCON_ROOT/rtl/fifo/sync_fifo_core.v
+$FALCON_ROOT/rtl/fifo/sync_fifo_top.v

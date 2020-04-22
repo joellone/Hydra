@@ -1,0 +1,12 @@
+$XGMII_MAC_PATH/crc32_64bit_function_pkt.vhd
+$XGMII_MAC_PATH/crc32_d64_inout_adapt.vhd
+$XGMII_MAC_PATH/crc32_d64.vhd
+$XGMII_MAC_PATH/cut_crc32_d64.vhd
+$XGMII_MAC_PATH/insert_crc32_d64.vhd
+$XGMII_MAC_PATH/pkt_len_extract.vhd
+$XGMII_MAC_PATH/tb_xgmii_mac.vhd
+$XGMII_MAC_PATH/xgmac_word_adjust.vhd
+$XGMII_MAC_PATH/xgmii_mac_bfm.vhd
+$XGMII_MAC_PATH/xgmii_mac_rx.vhd
+$XGMII_MAC_PATH/xgmii_mac_top.vhd
+$XGMII_MAC_PATH/xgmii_mac_tx.vhd
