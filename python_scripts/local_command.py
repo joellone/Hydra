@@ -10,6 +10,11 @@ class local_command:
     password = 'IC!shanghai8'
     prj_path = '/home/kejiany/Project/01_falcon_repo/07_DFC12/testbench_systemv'
     sim_path = '/home/kejiany/sim'
+    regress_log = 'regress_log'
+
+    def __init__(self, arg_p):
+        self.fail_cnt = 0
+        self.pass_cnt = 0
 
     def git_add(self):
         ssh_con = ssh_connection.ssh_connection('127.0.0.1')
@@ -53,19 +58,29 @@ class local_command:
         ssh_con.serv_close()
         time.sleep(1)
 
-    def collect_log(self):
-        ins_tc_list = tc_list.tc_list()
-        ins_tc_list.read_file(self.sim_path + '/falcon_uvm_package.sv')
-        reg_log_path = self.sim_path + '/' + 'regress_log'
+    def append_log(self, append_str):
+        reg_log_path = self.sim_path + '/' + self.regress_log
+        reg_log = open(reg_log_path, 'a')
+        reg_log.write(append_str)
+        reg_log.close()
+
+    def write_log(self, write_str):
+        reg_log_path = self.sim_path + '/' + self.regress_log
         reg_log = open(reg_log_path, 'w')
+        reg_log.write(write_str)
+        reg_log.close()
+
+    def collect_log(self, tc_list_name='falcon_uvm_package.sv'):
+        ins_tc_list = tc_list.tc_list()
+        ins_tc_list.read_file(self.sim_path + '/' + tc_list_name)
         for tc in ins_tc_list.testcast_list:
             for i in range(0, 100):
-                reg_log.write('-')
+                self.append_log('-')
             else:
-                reg_log.write('\n')
+                self.append_log('\n')
             # localtime = time.asctime(time.localtime(time.time()))
             # reg_log.write(localtime + '\n')
-            reg_log.write(tc + ': ')
+            self.append_log(tc + ': ')
             tc_log_path = self.sim_path + '/' + tc + '/run_log'
             # Try to open the log file
             try:
@@ -76,23 +91,27 @@ class local_command:
                     rd_line = tc_log.readline()
                     if ('FAILED' in rd_line):
                         failed = 'true'
-                    if ('PASSED' in rd_line):
+                        self.fail_cnt += 1
+                    elif ('PASSED' in rd_line):
                         failed = 'false'
-                    if ('Elapsed' in rd_line):
-                        reg_log.write(rd_line)
-                    if ('Sv_Seed' in rd_line):
-                        reg_log.write(rd_line)
+                        self.pass_cnt += 1
 
+                    if ('Elapsed' in rd_line):
+                        self.append_log(rd_line)
+                    if ('Sv_Seed' in rd_line):
+                        self.append_log(rd_line)
+
+                    # End of file
                     if not rd_line:
                         if failed == '':
-                            reg_log.write('run not finished\n')
+                            self.append_log('run not finished\n')
                         elif failed == 'false':
-                            reg_log.write('passed\n')
+                            self.append_log('passed\n')
                         else:
-                            reg_log.write('failed\n')
+                            self.append_log('failed\n')
                         break
             except IOError:
                 print("Open log file " + tc + " failed")
-                reg_log.write('no log file\n')
+                self.append_log('no log file\n')
                 continue
-            reg_log.write('Log path: ' + tc_log_path + '\n')
+            self.append_log('Log path: ' + tc_log_path + '\n')

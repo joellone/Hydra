@@ -18,6 +18,7 @@ class ssh_connection:
     sim_path = DFC12_PATH + "/sim"
     script_path = DFC12_PATH + "/testbench_systemv/scripts"
     local_path = "/home/kejiany"
+    error_num = 0
 
     def __init__(self, serv_name):
         self.name = serv_name
@@ -52,22 +53,22 @@ class ssh_connection:
         self.channel.invoke_shell()
         # 获取原操作终端属性
         oldtty = termios.tcgetattr(sys.stdin)
-        # try:
-        # 将现在的操作终端属性设置为服务器上的原生终端属性,可以支持tab了
-        tty.setraw(sys.stdin)
-        self.channel.settimeout(0)
-        if (pty_en == 1):
-            self.open_pty()
-        # finally:
-        #     # 执行完后将现在的终端属性恢复为原操作终端属性
-        #     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, oldtty)
+        try:
+            # 将现在的操作终端属性设置为服务器上的原生终端属性,可以支持tab了
+            tty.setraw(sys.stdin)
+            self.channel.settimeout(0)
+            if (pty_en == 1):
+                self.open_pty()
+        finally:
+            # 执行完后将现在的终端属性恢复为原操作终端属性
+            termios.tcsetattr(sys.stdin, termios.TCSADRAIN, oldtty)
         return
 
     def send_cmd(self, cmd):
         print(cmd)
         self.channel.send(cmd)
 
-    def wait_echo(self, str_echo):
+    def wait_echo(self, str_echo, error_stat=0):
         while True:
             readlist, writelist, errlist = select.select([self.channel, ], [], [])
             # 服务器返回了结果,channel通道接受到结果,发生变化 select感知到
@@ -75,6 +76,14 @@ class ssh_connection:
                 # 获取结果
                 result = self.channel.recv(1024)
                 result = result.decode()
+
+                # 断开连接后退出
+                if len(result) == 0:
+                    print("\r\n**** EOF **** \r\n")
+                    break
+
+                if (error_stat == 1):
+                    self.error_stat(result)
 
                 # wait
                 if str_echo in result:
@@ -85,6 +94,21 @@ class ssh_connection:
                 # 输出到屏幕
                 sys.stdout.write(result)
                 sys.stdout.flush()
+
+    def error_stat(self, str_stat):
+        sub_str = str_stat
+        while ("Errors" in sub_str):
+            # print("Sub string: " + sub_str)
+            index = sub_str.find("Errors")
+            if (index != -1):
+                sub_str = sub_str[(index+len("Errors: ")):]
+                # print("Sub string: " + sub_str)
+                index = sub_str.find(",")
+                num_str = sub_str[0:index]
+                # print("Received error number is: %d" % int(num_str))
+                self.error_num = self.error_num + int(num_str)
+            else:
+                return
 
     def open_pty(self):
         while True:
